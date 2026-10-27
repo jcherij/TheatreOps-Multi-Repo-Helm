@@ -37,14 +37,14 @@ spec:
               protocol: TCP
           env:
             - name: POSTGRES_DB
-              value: {{ .Values.postgresql.database | quote }}
+              value: {{ .Values.postgresql.auth.database | quote }}
             - name: POSTGRES_USER
-              value: {{ .Values.postgresql.username | quote }}
+              value: {{ .Values.postgresql.auth.username | quote }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.existingSecret }}
-                  key: {{ .Values.postgresql.secretKeys.userPasswordKey }}
+                  name: {{ .Values.postgresql.auth.existingSecret }}
+                  key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey }}
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           securityContext:
@@ -59,12 +59,12 @@ spec:
               mountPath: /var/lib/postgresql/data
           livenessProbe:
             exec:
-              command: ["pg_isready", "-U", {{ .Values.postgresql.username | quote }}]
+              command: ["pg_isready", "-U", {{ .Values.postgresql.auth.username | quote }}]
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", {{ .Values.postgresql.username | quote }}]
+              command: ["pg_isready", "-U", {{ .Values.postgresql.auth.username | quote }}]
             initialDelaySeconds: 5
             periodSeconds: 5
       volumes:

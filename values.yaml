@@ -70,12 +70,13 @@ serviceAccount:
 postgresql:
   enabled: true
   image: postgres:15-alpine
-  database: mediqueue
-  username: mediqueue_app
-  existingSecret: mediqueue-db-credentials
-  secretKeys:
-    adminPasswordKey: postgres-password
-    userPasswordKey: app-password
+  auth:
+    database: mediqueue
+    username: mediqueue_app
+    existingSecret: mediqueue-db-credentials
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: app-password
   persistence:
     enabled: true
     size: 20Gi
