@@ -66,47 +66,43 @@ podDisruptionBudget:
 serviceAccount:
   annotations: {}
 
-# PostgreSQL subchart — stores scheduling and patient assignment data
+# PostgreSQL — stores scheduling and patient assignment data (inline Deployment + Service)
 postgresql:
   enabled: true
-  auth:
-    database: mediqueue
-    username: mediqueue_app
-    existingSecret: mediqueue-db-credentials
-    secretKeys:
-      adminPasswordKey: postgres-password
-      userPasswordKey: app-password
-  primary:
-    persistence:
-      enabled: true
-      size: 20Gi
-      storageClass: standard-rwo
-    resources:
-      requests:
-        cpu: 500m
-        memory: 512Mi
-      limits:
-        cpu: "1"
-        memory: 1Gi
-  readReplicas:
-    replicaCount: 1
+  image: postgres:15-alpine
+  database: mediqueue
+  username: mediqueue_app
+  existingSecret: mediqueue-db-credentials
+  secretKeys:
+    adminPasswordKey: postgres-password
+    userPasswordKey: app-password
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: standard-rwo
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
 
-# Redis subchart — caches OR schedule for low-latency reads
+# Redis — caches OR schedule for low-latency reads (inline Deployment + Service)
 redis:
   enabled: true
-  architecture: replication
+  image: redis:7-alpine
   auth:
     enabled: true
     existingSecret: mediqueue-redis-credentials
     existingSecretPasswordKey: redis-password
-  master:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-      limits:
-        cpu: 250m
-        memory: 256Mi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
 
 config:
   logLevel: info
